@@ -77,6 +77,9 @@ public class AlbumsController implements Initializable, SubView {
     
     private Song selectedSong;
     
+    final int ENUM1 = 25;
+    final int ENUM2 = 5;
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
@@ -85,7 +88,7 @@ public class AlbumsController implements Initializable, SubView {
 		ObservableList<Album> albums = Library.getAlbums();
 		Collections.sort(albums);
 
-        int limit = (albums.size() < 25) ? albums.size() : 25;
+        int limit = (albums.size() < ENUM1) ? albums.size() : ENUM1;
 
 		for (int i = 0; i < limit; i++) {
 
@@ -93,7 +96,7 @@ public class AlbumsController implements Initializable, SubView {
             grid.getChildren().add(createCell(album, i));
 		}
 
-        int rows = (albums.size() % 5 == 0) ? albums.size() / 5 : albums.size() / 5 + 1;
+        int rows = (albums.size() % ENUM2 == 0) ? albums.size() / ENUM2 : albums.size() / ENUM2 + 1;
         
         // Sets the height and width of the grid to fill the screen.
         grid.prefHeightProperty().bind(gridBox.widthProperty().divide(5).add(16).multiply(rows));

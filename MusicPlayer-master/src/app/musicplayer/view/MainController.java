@@ -659,9 +659,7 @@ public class MainController implements Initializable, IntellitypeListener {
     			if (index != 0) {
     				try {
     					i = Integer.parseInt(text.substring(index));
-    				} catch (Exception ex) {
-    					// do nothing
-    				}
+    				} catch (Exception ex) {}
     			}
     			
     			i++;

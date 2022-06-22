@@ -121,9 +121,7 @@ public class Search {
 
                 hasResults.set(true);
 
-            } catch (InterruptedException ex) {
-                // terminate thread
-            }
+            } catch (InterruptedException ex) {}
         });
         searchThread.start();
     }

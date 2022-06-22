@@ -66,6 +66,14 @@ public class PlaylistsController implements Initializable, SubView {
 
     private Playlist selectedPlaylist;
     private Song selectedSong;
+    //REFATORANDO MAGIC NUMBERS
+    final float ENUM = 0.5f;
+    final float ENUM2 = 1.0f;
+    final int ENUM3 = 2;
+    final int ENUM4 = 10;
+    final float ENUM5 = 0.26f;
+    final float ENUM6 = 0.11f;
+    final int ENUM7 = 50;
     
     // Used to store the individual playlist boxes from the playlistBox. 
     private HBox cell;
@@ -76,10 +84,10 @@ public class PlaylistsController implements Initializable, SubView {
             setInterpolator(Interpolator.EASE_BOTH);
         }
         protected void interpolate(double frac) {        	    		
-            if (frac < 0.5) {
-                cell.setOpacity(1.0 - frac * 2);
+            if (frac < ENUM) {
+                cell.setOpacity(ENUM2 - frac * ENUM3);
             } else {
-                cell.setPrefHeight(cell.getHeight() - (frac - 0.5) * 10);
+                cell.setPrefHeight(cell.getHeight() - (frac - ENUM) * ENUM4);
                 cell.setOpacity(0);
             }
         }
@@ -89,11 +97,11 @@ public class PlaylistsController implements Initializable, SubView {
     public void initialize(URL location, ResourceBundle resources) {
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        titleColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(50).multiply(0.26));
-        artistColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(50).multiply(0.26));
-        albumColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(50).multiply(0.26));
-        lengthColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(50).multiply(0.11));
-        playsColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(50).multiply(0.11));
+        titleColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(ENUM7).multiply(ENUM5));
+        artistColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(ENUM7).multiply(ENUM5));
+        albumColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(ENUM7).multiply(ENUM5));
+        lengthColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(ENUM7).multiply(ENUM6));
+        playsColumn.prefWidthProperty().bind(tableView.widthProperty().subtract(ENUM7).multiply(ENUM6));
 
         playingColumn.setCellFactory(x -> new PlayingTableCell<>());
         titleColumn.setCellFactory(x -> new ControlPanelTableCell<>());
@@ -137,7 +145,7 @@ public class PlaylistsController implements Initializable, SubView {
 
             row.setOnMouseClicked(event -> {            	
                 TableViewSelectionModel<Song> sm = tableView.getSelectionModel();
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                if (event.getClickCount() == ENUM3 && !row.isEmpty()) {
                     play();
                 } else if (event.isShiftDown()) {
                     ArrayList<Integer> indices = new ArrayList<>(sm.getSelectedIndices());
