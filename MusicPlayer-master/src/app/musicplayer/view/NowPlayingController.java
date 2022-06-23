@@ -77,7 +77,28 @@ public class NowPlayingController implements Initializable, SubView {
 
         tableView.setItems(songs);
 
-        tableView.setRowFactory(x -> {
+        clickAndDrag();
+        
+        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+        	if (oldSelection != null) {
+        		oldSelection.setSelected(false);
+        	}
+        	if (newSelection != null && tableView.getSelectionModel().getSelectedIndices().size() == 1) {
+        		newSelection.setSelected(true);
+        		selectedSong = newSelection;
+        	}
+        });
+        
+        // Plays selected song when enter key is pressed.
+        tableView.setOnKeyPressed(event -> {
+        	if (event.getCode().equals(KeyCode.ENTER)) {
+        		play();
+        	}
+        });
+    }
+    
+    public void clickAndDrag() {
+    	tableView.setRowFactory(x -> {
 
             TableRow<Song> row = new TableRow<>();
 
@@ -163,25 +184,6 @@ public class NowPlayingController implements Initializable, SubView {
             	db.setDragView(image.snapshot(null, null), 125, 25);
                 event.consume();
             });
-
-            return row ;
-        });
-        
-        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-        	if (oldSelection != null) {
-        		oldSelection.setSelected(false);
-        	}
-        	if (newSelection != null && tableView.getSelectionModel().getSelectedIndices().size() == 1) {
-        		newSelection.setSelected(true);
-        		selectedSong = newSelection;
-        	}
-        });
-        
-        // Plays selected song when enter key is pressed.
-        tableView.setOnKeyPressed(event -> {
-        	if (event.getCode().equals(KeyCode.ENTER)) {
-        		play();
-        	}
         });
     }
     

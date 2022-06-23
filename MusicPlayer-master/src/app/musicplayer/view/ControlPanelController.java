@@ -84,10 +84,9 @@ public class ControlPanelController implements Initializable {
 
 		if (playlistTitles.size() > 0) {
 			SeparatorMenuItem item = new SeparatorMenuItem();
-			item.getContent().setStyle(
-					"-fx-border-width: 1 0 0 0; " +
-							"-fx-border-color: #c2c2c2; " +
-							"-fx-border-insets: 5 5 5 5;");
+			item.getContent().setStyle("-fx-border-width: 1 0 0 0; ");
+			item.getContent().setStyle("-fx-border-color: #c2c2c2; ");
+			item.getContent().setStyle("-fx-border-insets: 5 5 5 5; ");
 			contextMenu.getItems().add(item);
 		}
 

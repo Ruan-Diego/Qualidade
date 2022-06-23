@@ -25,10 +25,19 @@ public class ControlPanelTableCell<S, T> extends TableCell<S, T> {
 		
 		Song song = (Song) this.getTableRow().getItem();
 		
-		if (empty || item == null || song == null) {
+		if (empty) {
 			setText(null);
 			setGraphic(null);
-		} else if (!song.getSelected()) {
+		}
+		else if(song == null) {
+			setText(null);
+			setGraphic(null);
+		}
+		else if(item == null) {
+			setText(null);
+			setGraphic(null);
+		}
+		else if (!song.getSelected()) {
 			setText(item.toString());
 			setGraphic(null);
 			song.selectedProperty().removeListener(listener);

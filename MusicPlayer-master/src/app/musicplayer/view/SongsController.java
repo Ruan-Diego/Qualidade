@@ -94,94 +94,7 @@ public class SongsController implements Initializable, SubView {
         
         tableView.setItems(songs);
 
-        tableView.setRowFactory(x -> {
-            TableRow<Song> row = new TableRow<>();
-
-            PseudoClass playing = PseudoClass.getPseudoClass("playing");
-
-            ChangeListener<Boolean> changeListener = (obs, oldValue, newValue) ->
-                    row.pseudoClassStateChanged(playing, newValue);
-
-            row.itemProperty().addListener((obs, previousSong, currentSong) -> {
-            	if (previousSong != null) {
-            		previousSong.playingProperty().removeListener(changeListener);
-            	}
-            	if (currentSong != null) {
-                    currentSong.playingProperty().addListener(changeListener);
-                    row.pseudoClassStateChanged(playing, currentSong.getPlaying());
-                } else {
-                    row.pseudoClassStateChanged(playing, false);
-                }
-            });
-
-            row.setOnMouseClicked(event -> {
-            	TableViewSelectionModel<Song> sm = tableView.getSelectionModel();
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    play();
-                } else if (event.isShiftDown()) {
-                	ArrayList<Integer> indices = new ArrayList<>(sm.getSelectedIndices());
-                	if (indices.size() < 1) {
-                		if (indices.contains(row.getIndex())) {
-                    		sm.clearSelection(row.getIndex());
-                    	} else {
-                    		sm.select(row.getItem());
-                    	}
-                	} else {
-                		sm.clearSelection();
-	                	indices.sort((first, second) -> first.compareTo(second));
-	                	int max = indices.get(indices.size() - 1);
-	                	int min = indices.get(0);
-	                	if (min < row.getIndex()) {
-	                		for (int i = min; i <= row.getIndex(); i++) {
-	                			sm.select(i);
-	                		}
-	                	} else {
-	                		for (int i = row.getIndex(); i <= max; i++) {
-	                			sm.select(i);
-	                		}
-	                	}
-                	}
-                	
-                } else if (event.isControlDown()) {
-                	if (sm.getSelectedIndices().contains(row.getIndex())) {
-                		sm.clearSelection(row.getIndex());
-                	} else {
-                		sm.select(row.getItem());
-                	}
-                } else {
-                	if (sm.getSelectedIndices().size() > 1) {
-                		sm.clearSelection();
-                    	sm.select(row.getItem());
-                	} else if (sm.getSelectedIndices().contains(row.getIndex())) {
-                		sm.clearSelection();
-                	} else {
-                		sm.clearSelection();
-                    	sm.select(row.getItem());
-                	}
-                }
-            });
-            
-            row.setOnDragDetected(event -> {
-            	Dragboard db = row.startDragAndDrop(TransferMode.ANY);
-            	ClipboardContent content = new ClipboardContent();
-            	if (tableView.getSelectionModel().getSelectedIndices().size() > 1) {
-            		content.putString("List");
-                    db.setContent(content);
-                	MusicPlayer.setDraggedItem(tableView.getSelectionModel().getSelectedItems());
-            	} else {
-            		content.putString("Song");
-                    db.setContent(content);
-                	MusicPlayer.setDraggedItem(row.getItem());
-            	}
-            	ImageView image = new ImageView(row.snapshot(null, null));
-            	Rectangle2D rectangle = new Rectangle2D(0, 0, 250, 50);
-            	image.setViewport(rectangle);
-            	db.setDragView(image.snapshot(null, null), 125, 25);
-                event.consume();
-            });
-
-            return row ;
-        });
+        clickAndDrag();
         
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
         	if (oldSelection != null) {
@@ -219,6 +132,94 @@ public class SongsController implements Initializable, SubView {
         artistColumn.setComparator((first, second) -> Library.getArtist(first).compareTo(Library.getArtist(second)));
         
         albumColumn.setComparator((first, second) -> Library.getAlbum(first).compareTo(Library.getAlbum(second)));
+    }
+    
+    public void clickAndDrag() {
+        tableView.setRowFactory(x -> {
+            TableRow<Song> row = new TableRow<>();
+
+            PseudoClass playing = PseudoClass.getPseudoClass("playing");
+
+            ChangeListener<Boolean> changeListener = (obs, oldValue, newValue) ->
+                    row.pseudoClassStateChanged(playing, newValue);
+
+            row.itemProperty().addListener((obs, previousSong, currentSong) -> {
+            	if (previousSong != null) {
+            		previousSong.playingProperty().removeListener(changeListener);
+            	}
+            	if (currentSong != null) {
+                    currentSong.playingProperty().addListener(changeListener);
+                    row.pseudoClassStateChanged(playing, currentSong.getPlaying());
+                } else {
+                    row.pseudoClassStateChanged(playing, false);
+                }
+            });
+    	row.setOnMouseClicked(event -> {
+        	TableViewSelectionModel<Song> sm = tableView.getSelectionModel();
+            if (event.getClickCount() == 2 && !row.isEmpty()) {
+                play();
+            } else if (event.isShiftDown()) {
+            	ArrayList<Integer> indices = new ArrayList<>(sm.getSelectedIndices());
+            	if (indices.size() < 1) {
+            		if (indices.contains(row.getIndex())) {
+                		sm.clearSelection(row.getIndex());
+                	} else {
+                		sm.select(row.getItem());
+                	}
+            	} else {
+            		sm.clearSelection();
+                	indices.sort((first, second) -> first.compareTo(second));
+                	int max = indices.get(indices.size() - 1);
+                	int min = indices.get(0);
+                	if (min < row.getIndex()) {
+                		for (int i = min; i <= row.getIndex(); i++) {
+                			sm.select(i);
+                		}
+                	} else {
+                		for (int i = row.getIndex(); i <= max; i++) {
+                			sm.select(i);
+                		}
+                	}
+            	}
+            	
+            } else if (event.isControlDown()) {
+            	if (sm.getSelectedIndices().contains(row.getIndex())) {
+            		sm.clearSelection(row.getIndex());
+            	} else {
+            		sm.select(row.getItem());
+            	}
+            } else {
+            	if (sm.getSelectedIndices().size() > 1) {
+            		sm.clearSelection();
+                	sm.select(row.getItem());
+            	} else if (sm.getSelectedIndices().contains(row.getIndex())) {
+            		sm.clearSelection();
+            	} else {
+            		sm.clearSelection();
+                	sm.select(row.getItem());
+            	}
+            }
+        });
+        
+        row.setOnDragDetected(event -> {
+        	Dragboard db = row.startDragAndDrop(TransferMode.ANY);
+        	ClipboardContent content = new ClipboardContent();
+        	if (tableView.getSelectionModel().getSelectedIndices().size() > 1) {
+        		content.putString("List");
+                db.setContent(content);
+            	MusicPlayer.setDraggedItem(tableView.getSelectionModel().getSelectedItems());
+        	} else {
+        		content.putString("Song");
+                db.setContent(content);
+            	MusicPlayer.setDraggedItem(row.getItem());
+        	}
+        	ImageView image = new ImageView(row.snapshot(null, null));
+        	Rectangle2D rectangle = new Rectangle2D(0, 0, 250, 50);
+        	image.setViewport(rectangle);
+        	db.setDragView(image.snapshot(null, null), 125, 25);
+            event.consume();
+        });
+    });
     }
     
     private int compareSongs(Song x, Song y) {
@@ -333,8 +334,8 @@ public class SongsController implements Initializable, SubView {
     	double finalVvalue;
     	
     	if ("descending".equals(currentSortOrder)) {
-    		finalVvalue = 1 - (((selectedCell + selectedLetterCount) * 50 - scrollBar.getHeight()) /
-    				(songTableItems.size() * 50 - scrollBar.getHeight()));
+    		finalVvalue = 1 - ((selectedCell + selectedLetterCount) * 50 - scrollBar.getHeight());
+    		finalVvalue = finalVvalue/(songTableItems.size() * 50 - scrollBar.getHeight());
     	} else {
     		finalVvalue = (double) (selectedCell * 50) / (songTableItems.size() * 50 - scrollBar.getHeight());
     	}

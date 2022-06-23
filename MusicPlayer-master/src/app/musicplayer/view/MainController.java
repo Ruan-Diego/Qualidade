@@ -155,7 +155,29 @@ public class MainController implements Initializable, IntellitypeListener {
 			}
 		});
 
-		Search.hasResultsProperty().addListener((observable, hadResults, hasResults) -> {
+		musicRequest();
+		
+		for (Node node : letterBox.getChildren()) {
+        	Label label = (Label)node;
+        	label.prefWidthProperty().bind(letterBox.widthProperty().subtract(50).divide(26).subtract(1));
+        }
+        
+        updateNowPlayingButton();
+        initializeTimeSlider();
+        initializeTimeLabels();
+        initializePlaylists();
+        
+        // Register media keys on Windows
+        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+        	JIntellitype.getInstance().addIntellitypeListener(this);
+        }
+        
+        // Loads the default view: artists.
+        loadView("artists");
+    }
+    
+    public void musicRequest() {
+    	Search.hasResultsProperty().addListener((observable, hadResults, hasResults) -> {
 			if (hasResults) {
                 SearchResult result = Search.getResult();
                 Platform.runLater(() -> {
@@ -185,24 +207,6 @@ public class MainController implements Initializable, IntellitypeListener {
                 searchHideAnimation.play();
             }
         });
-
-		for (Node node : letterBox.getChildren()) {
-        	Label label = (Label)node;
-        	label.prefWidthProperty().bind(letterBox.widthProperty().subtract(50).divide(26).subtract(1));
-        }
-        
-        updateNowPlayingButton();
-        initializeTimeSlider();
-        initializeTimeLabels();
-        initializePlaylists();
-        
-        // Register media keys on Windows
-        if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
-        	JIntellitype.getInstance().addIntellitypeListener(this);
-        }
-        
-        // Loads the default view: artists.
-        loadView("artists");
     }
     
     @Override
@@ -337,6 +341,60 @@ public class MainController implements Initializable, IntellitypeListener {
         timeRemaining.setText(MusicPlayer.getTimeRemaining());
     }
     
+    public void clickAndDrag(HBox cell) {
+		cell.setOnMouseClicked(x -> {
+			selectView(x);
+			((PlaylistsController) subViewController).selectPlaylist(playlist);
+		});
+		
+		cell.setOnDragDetected(event -> {
+			PseudoClass pressed = PseudoClass.getPseudoClass("pressed");
+			cell.pseudoClassStateChanged(pressed, false);
+        	Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+        	ClipboardContent content = new ClipboardContent();
+            content.putString("Playlist");
+            db.setContent(content);
+        	MusicPlayer.setDraggedItem(playlist);
+        	db.setDragView(cell.snapshot(null, null), 125, 25);
+            event.consume();
+        });
+		
+		PseudoClass hover = PseudoClass.getPseudoClass("hover");
+		
+		cell.setOnDragEntered(event -> {
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				cell.pseudoClassStateChanged(hover, true);
+				//cell.getStyleClass().setAll("sideBarItemSelected");
+			}
+		});
+		
+		cell.setOnDragExited(event -> {
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				cell.pseudoClassStateChanged(hover, false);
+				//cell.getStyleClass().setAll("sideBarItem");
+			}
+		});
+		
+		cell.setOnDragOver(event -> {
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				event.acceptTransferModes(TransferMode.ANY);
+			}
+			event.consume();
+		});
+    }
+    
     @SuppressWarnings("unchecked")
 	private void initializePlaylists() {
     	for (Playlist playlist : Library.getPlaylists()) {
@@ -346,57 +404,7 @@ public class MainController implements Initializable, IntellitypeListener {
 				Label label = (Label) cell.getChildren().get(1);
 				label.setText(playlist.getTitle());
 				
-				cell.setOnMouseClicked(x -> {
-					selectView(x);
-					((PlaylistsController) subViewController).selectPlaylist(playlist);
-				});
-				
-				cell.setOnDragDetected(event -> {
-					PseudoClass pressed = PseudoClass.getPseudoClass("pressed");
-					cell.pseudoClassStateChanged(pressed, false);
-    	        	Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-    	        	ClipboardContent content = new ClipboardContent();
-    	            content.putString("Playlist");
-    	            db.setContent(content);
-    	        	MusicPlayer.setDraggedItem(playlist);
-    	        	db.setDragView(cell.snapshot(null, null), 125, 25);
-    	            event.consume();
-    	        });
-				
-				PseudoClass hover = PseudoClass.getPseudoClass("hover");
-				
-				cell.setOnDragEntered(event -> {
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						cell.pseudoClassStateChanged(hover, true);
-						//cell.getStyleClass().setAll("sideBarItemSelected");
-					}
-				});
-				
-				cell.setOnDragExited(event -> {
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						cell.pseudoClassStateChanged(hover, false);
-						//cell.getStyleClass().setAll("sideBarItem");
-					}
-				});
-				
-				cell.setOnDragOver(event -> {
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						event.acceptTransferModes(TransferMode.ANY);
-					}
-					event.consume();
-				});
+				clickAndDrag(cell);
 				
 				cell.setOnDragDropped(event -> {
 					String dragString = event.getDragboard().getString();
@@ -491,6 +499,65 @@ public class MainController implements Initializable, IntellitypeListener {
     
     @SuppressWarnings("unchecked")
 	@FXML
+    clickAndDrag(HBox cell){
+    	cell.setOnMouseClicked(x -> {
+			selectView(x);
+			Playlist playlist = Library.getPlaylist(label.getText());
+			((PlaylistsController) subViewController).selectPlaylist(playlist);
+		});
+		
+		cell.setOnDragDetected(event -> {
+			PseudoClass pressed = PseudoClass.getPseudoClass("pressed");
+			cell.pseudoClassStateChanged(pressed, false);
+			Playlist playlist = Library.getPlaylist(label.getText());
+        	Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+        	ClipboardContent content = new ClipboardContent();
+            content.putString("Playlist");
+            db.setContent(content);
+        	MusicPlayer.setDraggedItem(playlist);
+        	SnapshotParameters sp = new SnapshotParameters();
+        	sp.setTransform(Transform.scale(1.5, 1.5));
+        	db.setDragView(cell.snapshot(sp, null));
+            event.consume();
+        });
+		
+		cell.setOnDragEntered(event -> {
+			Playlist playlist = Library.getPlaylist(label.getText());
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				cell.pseudoClassStateChanged(hover, true);
+			}
+		});
+		
+		cell.setOnDragExited(event -> {
+			Playlist playlist = Library.getPlaylist(label.getText());
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				cell.pseudoClassStateChanged(hover, false);
+			}
+		});
+		
+		cell.setOnDragOver(event -> {
+			Playlist playlist = Library.getPlaylist(label.getText());
+			if (!(playlist instanceof MostPlayedPlaylist)
+					&& !(playlist instanceof RecentlyPlayedPlaylist)
+					&& event.getGestureSource() != cell
+					&& event.getDragboard().hasString()) {
+				
+				event.acceptTransferModes(TransferMode.ANY);
+			}
+			event.consume();
+		});
+    }
+    
+    @SuppressWarnings("unchecked")
+	@FXML
     private void newPlaylist() {
     	
     	if (!newPlaylistAnimation.getStatus().equals(Status.RUNNING)) {
@@ -527,62 +594,11 @@ public class MainController implements Initializable, IntellitypeListener {
     		        }
     			});
     			
-    			cell.setOnMouseClicked(x -> {
-    				selectView(x);
-    				Playlist playlist = Library.getPlaylist(label.getText());
-    				((PlaylistsController) subViewController).selectPlaylist(playlist);
-    			});
-    			
-    			cell.setOnDragDetected(event -> {
-    				PseudoClass pressed = PseudoClass.getPseudoClass("pressed");
-					cell.pseudoClassStateChanged(pressed, false);
-    				Playlist playlist = Library.getPlaylist(label.getText());
-    	        	Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-    	        	ClipboardContent content = new ClipboardContent();
-    	            content.putString("Playlist");
-    	            db.setContent(content);
-    	        	MusicPlayer.setDraggedItem(playlist);
-    	        	SnapshotParameters sp = new SnapshotParameters();
-    	        	sp.setTransform(Transform.scale(1.5, 1.5));
-    	        	db.setDragView(cell.snapshot(sp, null));
-    	            event.consume();
-    	        });
+    			clickAndDrag(cell);
     			
     			PseudoClass hover = PseudoClass.getPseudoClass("hover");
 				
-    			cell.setOnDragEntered(event -> {
-    				Playlist playlist = Library.getPlaylist(label.getText());
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						cell.pseudoClassStateChanged(hover, true);
-					}
-				});
-				
-				cell.setOnDragExited(event -> {
-					Playlist playlist = Library.getPlaylist(label.getText());
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						cell.pseudoClassStateChanged(hover, false);
-					}
-				});
-				
-				cell.setOnDragOver(event -> {
-					Playlist playlist = Library.getPlaylist(label.getText());
-					if (!(playlist instanceof MostPlayedPlaylist)
-							&& !(playlist instanceof RecentlyPlayedPlaylist)
-							&& event.getGestureSource() != cell
-							&& event.getDragboard().hasString()) {
-						
-						event.acceptTransferModes(TransferMode.ANY);
-					}
-					event.consume();
-				});
+    			
 				
 				cell.setOnDragDropped(event -> {
 					Playlist playlist = Library.getPlaylist(label.getText());
@@ -878,109 +894,120 @@ public class MainController implements Initializable, IntellitypeListener {
     		volumeShowAnimation.play();
     	}
     }
+    
+    public void if1(SearchResult result) {
+    	Label header = new Label("Artists");
+        list.add(header);
+        VBox.setMargin(header, new Insets(10, 10, 10, 10));
+        result.getArtistResults().forEach(artist -> {
+            HBox cell = new HBox();
+            cell.setAlignment(Pos.CENTER_LEFT);
+            cell.setPrefWidth(226);
+            cell.setPrefHeight(50);
+            ImageView image = new ImageView();
+            image.setFitHeight(40);
+            image.setFitWidth(40);
+            image.setImage(artist.getArtistImage());
+            Label label = new Label(artist.getTitle());
+            label.setTextOverrun(OverrunStyle.CLIP);
+            label.getStyleClass().setAll("searchLabel");
+            cell.getChildren().addAll(image, label);
+            HBox.setMargin(image, new Insets(5, 5, 5, 5));
+            HBox.setMargin(label, new Insets(10, 10, 10, 5));
+            cell.getStyleClass().add("searchResult");
+            cell.setOnMouseClicked(event -> {
+                loadView("ArtistsMain");
+                ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
+                artistsMainController.selectArtist(artist);
+                searchBox.setText("");
+                sideBar.requestFocus();
+            });
+            list.add(cell);
+        });
+        Separator separator = new Separator();
+        separator.setPrefWidth(206);
+        list.add(separator);
+        VBox.setMargin(separator, new Insets(10, 10, 0, 10));
+    }
 
+    public void if2 (SearchResult result) {
+    	Label header = new Label("Albums");
+        list.add(header);
+        VBox.setMargin(header, new Insets(10, 10, 10, 10));
+        result.getAlbumResults().forEach(album -> {
+            HBox cell = new HBox();
+            cell.setAlignment(Pos.CENTER_LEFT);
+            cell.setPrefWidth(226);
+            cell.setPrefHeight(50);
+            ImageView image = new ImageView();
+            image.setFitHeight(40);
+            image.setFitWidth(40);
+            image.setImage(album.getArtwork());
+            Label label = new Label(album.getTitle());
+            label.setTextOverrun(OverrunStyle.CLIP);
+            label.getStyleClass().setAll("searchLabel");
+            cell.getChildren().addAll(image, label);
+            HBox.setMargin(image, new Insets(5, 5, 5, 5));
+            HBox.setMargin(label, new Insets(10, 10, 10, 5));
+            cell.getStyleClass().add("searchResult");
+            cell.setOnMouseClicked(event -> {
+                loadView("ArtistsMain");
+                Artist artist = Library.getArtist(album.getArtist());
+                ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
+                artistsMainController.selectArtist(artist);
+                artistsMainController.selectAlbum(album);
+                searchBox.setText("");
+                sideBar.requestFocus();
+            });
+            list.add(cell);
+        });
+        Separator separator = new Separator();
+        separator.setPrefWidth(206);
+        list.add(separator);
+        VBox.setMargin(separator, new Insets(10, 10, 0, 10));
+    }
+    
+    public void if3 (SearchResult result) {
+    	Label header = new Label("Songs");
+        list.add(header);
+        VBox.setMargin(header, new Insets(10, 10, 10, 10));
+        result.getSongResults().forEach(song -> {
+            HBox cell = new HBox();
+            cell.setAlignment(Pos.CENTER_LEFT);
+            cell.setPrefWidth(226);
+            cell.setPrefHeight(50);
+            Label label = new Label(song.getTitle());
+            label.setTextOverrun(OverrunStyle.CLIP);
+            label.getStyleClass().setAll("searchLabel");
+            cell.getChildren().add(label);
+            HBox.setMargin(label, new Insets(10, 10, 10, 10));
+            cell.getStyleClass().add("searchResult");
+            cell.setOnMouseClicked(event -> {
+                loadView("ArtistsMain");
+                Artist artist = Library.getArtist(song.getArtist());
+                Album album = artist.getAlbums().stream().filter(x -> x.getTitle().equals(song.getAlbum())).findFirst().get();
+                ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
+                artistsMainController.selectArtist(artist);
+                artistsMainController.selectAlbum(album);
+                artistsMainController.selectSong(song);
+                searchBox.setText("");
+                sideBar.requestFocus();
+            });
+            list.add(cell);
+        });
+    }
     public void showSearchResults(SearchResult result) {
         VBox root = (VBox) searchPopup.getScene().getRoot();
         ObservableList<Node> list = root.getChildren();
         list.clear();
         if (result.getArtistResults().size() > 0) {
-            Label header = new Label("Artists");
-            list.add(header);
-            VBox.setMargin(header, new Insets(10, 10, 10, 10));
-            result.getArtistResults().forEach(artist -> {
-                HBox cell = new HBox();
-                cell.setAlignment(Pos.CENTER_LEFT);
-                cell.setPrefWidth(226);
-                cell.setPrefHeight(50);
-                ImageView image = new ImageView();
-                image.setFitHeight(40);
-                image.setFitWidth(40);
-                image.setImage(artist.getArtistImage());
-                Label label = new Label(artist.getTitle());
-                label.setTextOverrun(OverrunStyle.CLIP);
-                label.getStyleClass().setAll("searchLabel");
-                cell.getChildren().addAll(image, label);
-                HBox.setMargin(image, new Insets(5, 5, 5, 5));
-                HBox.setMargin(label, new Insets(10, 10, 10, 5));
-                cell.getStyleClass().add("searchResult");
-                cell.setOnMouseClicked(event -> {
-                    loadView("ArtistsMain");
-                    ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
-                    artistsMainController.selectArtist(artist);
-                    searchBox.setText("");
-                    sideBar.requestFocus();
-                });
-                list.add(cell);
-            });
-            Separator separator = new Separator();
-            separator.setPrefWidth(206);
-            list.add(separator);
-            VBox.setMargin(separator, new Insets(10, 10, 0, 10));
+        	if1(result);      
         }
         if (result.getAlbumResults().size() > 0) {
-            Label header = new Label("Albums");
-            list.add(header);
-            VBox.setMargin(header, new Insets(10, 10, 10, 10));
-            result.getAlbumResults().forEach(album -> {
-                HBox cell = new HBox();
-                cell.setAlignment(Pos.CENTER_LEFT);
-                cell.setPrefWidth(226);
-                cell.setPrefHeight(50);
-                ImageView image = new ImageView();
-                image.setFitHeight(40);
-                image.setFitWidth(40);
-                image.setImage(album.getArtwork());
-                Label label = new Label(album.getTitle());
-                label.setTextOverrun(OverrunStyle.CLIP);
-                label.getStyleClass().setAll("searchLabel");
-                cell.getChildren().addAll(image, label);
-                HBox.setMargin(image, new Insets(5, 5, 5, 5));
-                HBox.setMargin(label, new Insets(10, 10, 10, 5));
-                cell.getStyleClass().add("searchResult");
-                cell.setOnMouseClicked(event -> {
-                    loadView("ArtistsMain");
-                    Artist artist = Library.getArtist(album.getArtist());
-                    ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
-                    artistsMainController.selectArtist(artist);
-                    artistsMainController.selectAlbum(album);
-                    searchBox.setText("");
-                    sideBar.requestFocus();
-                });
-                list.add(cell);
-            });
-            Separator separator = new Separator();
-            separator.setPrefWidth(206);
-            list.add(separator);
-            VBox.setMargin(separator, new Insets(10, 10, 0, 10));
+            if2(result);
         }
         if (result.getSongResults().size() > 0) {
-            Label header = new Label("Songs");
-            list.add(header);
-            VBox.setMargin(header, new Insets(10, 10, 10, 10));
-            result.getSongResults().forEach(song -> {
-                HBox cell = new HBox();
-                cell.setAlignment(Pos.CENTER_LEFT);
-                cell.setPrefWidth(226);
-                cell.setPrefHeight(50);
-                Label label = new Label(song.getTitle());
-                label.setTextOverrun(OverrunStyle.CLIP);
-                label.getStyleClass().setAll("searchLabel");
-                cell.getChildren().add(label);
-                HBox.setMargin(label, new Insets(10, 10, 10, 10));
-                cell.getStyleClass().add("searchResult");
-                cell.setOnMouseClicked(event -> {
-                    loadView("ArtistsMain");
-                    Artist artist = Library.getArtist(song.getArtist());
-                    Album album = artist.getAlbums().stream().filter(x -> x.getTitle().equals(song.getAlbum())).findFirst().get();
-                    ArtistsMainController artistsMainController = (ArtistsMainController) loadView("ArtistsMain");
-                    artistsMainController.selectArtist(artist);
-                    artistsMainController.selectAlbum(album);
-                    artistsMainController.selectSong(song);
-                    searchBox.setText("");
-                    sideBar.requestFocus();
-                });
-                list.add(cell);
-            });
+            if3(result);
         }
         if (list.size() == 0) {
             Label label = new Label("No Results");
