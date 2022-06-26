@@ -77,6 +77,7 @@ public class AlbumsController implements Initializable, SubView {
     
     private Song selectedSong;
     
+    //long method= 174 linhas
     final int ENUM1 = 25;
     final int ENUM2 = 5;
     
@@ -161,52 +162,52 @@ public class AlbumsController implements Initializable, SubView {
                 }
             });
 
-            row.setOnMouseClicked(event -> {
-            	TableViewSelectionModel<Song> sm = songTable.getSelectionModel();
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    play();
-                } else if (event.isShiftDown()) {
-                	ArrayList<Integer> indices = new ArrayList<Integer>(sm.getSelectedIndices());
-                	if (indices.size() < 1) {
-                		if (indices.contains(row.getIndex())) {
-                    		sm.clearSelection(row.getIndex());
-                    	} else {
-                    		sm.select(row.getItem());
-                    	}
-                	} else {
-                		sm.clearSelection();
-	                	indices.sort((first, second) -> first.compareTo(second));
-	                	int max = indices.get(indices.size() - 1);
-	                	int min = indices.get(0);
-	                	if (min < row.getIndex()) {
-	                		for (int i = min; i <= row.getIndex(); i++) {
-	                			sm.select(i);
-	                		}
-	                	} else {
-	                		for (int i = row.getIndex(); i <= max; i++) {
-	                			sm.select(i);
-	                		}
-	                	}
-                	}
+            // row.setOnMouseClicked(event -> {
+            // 	TableViewSelectionModel<Song> sm = songTable.getSelectionModel();
+            //     if (event.getClickCount() == 2 && !row.isEmpty()) {
+            //         play();
+            //     } else if (event.isShiftDown()) {
+            //     	ArrayList<Integer> indices = new ArrayList<Integer>(sm.getSelectedIndices());
+            //     	if (indices.size() < 1) {
+            //     		if (indices.contains(row.getIndex())) {
+            //         		sm.clearSelection(row.getIndex());
+            //         	} else {
+            //         		sm.select(row.getItem());
+            //         	}
+            //     	} else {
+            //     		sm.clearSelection();
+	        //         	indices.sort((first, second) -> first.compareTo(second));
+	        //         	int max = indices.get(indices.size() - 1);
+	        //         	int min = indices.get(0);
+	        //         	if (min < row.getIndex()) {
+	        //         		for (int i = min; i <= row.getIndex(); i++) {
+	        //         			sm.select(i);
+	        //         		}
+	        //         	} else {
+	        //         		for (int i = row.getIndex(); i <= max; i++) {
+	        //         			sm.select(i);
+	        //         		}
+	        //         	}
+            //     	}
                 	
-                } else if (event.isControlDown()) {
-                	if (sm.getSelectedIndices().contains(row.getIndex())) {
-                		sm.clearSelection(row.getIndex());
-                	} else {
-                		sm.select(row.getItem());
-                	}
-                } else {
-                	if (sm.getSelectedIndices().size() > 1) {
-                		sm.clearSelection();
-                    	sm.select(row.getItem());
-                	} else if (sm.getSelectedIndices().contains(row.getIndex())) {
-                		sm.clearSelection();
-                	} else {
-                		sm.clearSelection();
-                    	sm.select(row.getItem());
-                	}
-                }
-            });
+            //     } else if (event.isControlDown()) {
+            //     	if (sm.getSelectedIndices().contains(row.getIndex())) {
+            //     		sm.clearSelection(row.getIndex());
+            //     	} else {
+            //     		sm.select(row.getItem());
+            //     	}
+            //     } else {
+            //     	if (sm.getSelectedIndices().size() > 1) {
+            //     		sm.clearSelection();
+            //         	sm.select(row.getItem());
+            //     	} else if (sm.getSelectedIndices().contains(row.getIndex())) {
+            //     		sm.clearSelection();
+            //     	} else {
+            //     		sm.clearSelection();
+            //         	sm.select(row.getItem());
+            //     	}
+            //     }
+            // });
             
             row.setOnDragDetected(event -> {
             	Dragboard db = row.startDragAndDrop(TransferMode.ANY);
@@ -245,22 +246,29 @@ public class AlbumsController implements Initializable, SubView {
         		play();
         	}
         });
-
         horizontalSeparator.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent e) {
             	
-            	expandedHeight = MusicPlayer.getStage().getHeight() - e.getSceneY() - 75;
-            	
-            	if (expandedHeight > gridBox.getHeight() * 0.75) {	
-                	expandedHeight = gridBox.getHeight() * 0.75;
-                } else if (expandedHeight < gridBox.getHeight() * 0.25) {
-                	expandedHeight = gridBox.getHeight() * 0.25;
+            	if (expandedHeight >= gridBox.getHeight() * 0.75) {	
+                } else if (expandedHeight <= gridBox.getHeight() * 0.25) {
                 }
+            };
+        
+
+        // horizontalSeparator.setOnMouseDragged(new EventHandler<MouseEvent>() {
+        //     @Override public void handle(MouseEvent e) {
             	
-            	songBox.setPrefHeight(expandedHeight);
-                e.consume();
-            }
-        });
+        //     	expandedHeight = MusicPlayer.getStage().getHeight() - e.getSceneY() - 75;
+            	
+        //     	if (expandedHeight > gridBox.getHeight() * 0.75) {	
+        //         	expandedHeight = gridBox.getHeight() * 0.75;
+        //         } else if (expandedHeight < gridBox.getHeight() * 0.25) {
+        //         	expandedHeight = gridBox.getHeight() * 0.25;
+        //         }
+            	
+        //     	songBox.setPrefHeight(expandedHeight);
+        //         e.consume();
+        //     }
+        // });
 	}
 	
     private VBox createCell(Album album, int index) {

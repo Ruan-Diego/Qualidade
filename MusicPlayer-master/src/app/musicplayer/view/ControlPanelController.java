@@ -49,7 +49,7 @@ public class ControlPanelController implements Initializable {
 		controller.play();
 		e.consume();
 	}
-
+//Long Statement
 	@FXML
 	private void addToPlaylist(Event e) {
 		// Gets the mouse event coordinates in the screen to display the context menu in this location.
@@ -89,31 +89,33 @@ public class ControlPanelController implements Initializable {
 			item.getContent().setStyle("-fx-border-insets: 5 5 5 5; ");
 			contextMenu.getItems().add(item);
 		}
-
-		// Creates a menu item for each playlist title and adds it to the context menu.
-		for (String title : playlistTitles) {
-			MenuItem item = new MenuItem(title);
-			item.setStyle("-fx-text-fill: black");
-
-			item.setOnAction(e2 -> {
-				// Finds the desired playlist and adds the currently selected song to it.
-				String targetPlaylistTitle = item.getText();
-
-				// Finds the correct playlist and adds the song to it.
-				playlists.forEach(playlist -> {
-					if (playlist.getTitle().equals(targetPlaylistTitle)) {
-						playlist.addSong(selectedSong);
-					}
-				});
-			});
-
-			contextMenu.getItems().add(item);
-		}
-
-		contextMenu.setOpacity(0);
-		contextMenu.show(playButton, x, y);
-		showMenuAnimation.play();
-
-		e.consume();
 	}
-}
+};
+
+// 		// Creates a menu item for each playlist title and adds it to the context menu.
+// 		for (String title : playlistTitles) {
+// 			MenuItem item = new MenuItem(title);
+// 			item.setStyle("-fx-text-fill: black");
+
+// 			item.setOnAction(e2 -> {
+// 				// Finds the desired playlist and adds the currently selected song to it.
+// 				String targetPlaylistTitle = item.getText();
+
+// 				// Finds the correct playlist and adds the song to it.
+// 				playlists.forEach(playlist -> {
+// 					if (playlist.getTitle().equals(targetPlaylistTitle)) {
+// 						playlist.addSong(selectedSong);
+// 					}
+// 				});
+// 			});
+
+// 			contextMenu.getItems().add(item);
+// 		}
+
+// 		contextMenu.setOpacity(0);
+// 		contextMenu.show(playButton, x, y);
+// 		showMenuAnimation.play();
+
+// 		e.consume();
+// 	}
+// }

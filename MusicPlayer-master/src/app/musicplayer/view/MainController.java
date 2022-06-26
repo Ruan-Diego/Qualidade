@@ -666,12 +666,12 @@ public class MainController implements Initializable, IntellitypeListener {
         	newPlaylistAnimation.play();
     	}
     }
-    
+    //Complex Conditional
     private String checkDuplicatePlaylist(String text, int i) {
-    	for (Playlist playlist : Library.getPlaylists()) {
-    		if (playlist.getTitle().equals(text)) {
+    	// for (Playlist playlist : Library.getPlaylists()) {
+    	// 	if (playlist.getTitle().equals(text)) {
     			
-    			int index = text.lastIndexOf(' ') + 1;
+    	// 		int index = text.lastIndexOf(' ') + 1;
     			if (index != 0) {
     				try {
     					i = Integer.parseInt(text.substring(index));
@@ -703,30 +703,30 @@ public class MainController implements Initializable, IntellitypeListener {
         	case "artistsmain":
         	case "albums":
         	case "songs":
-        		if (subViewController instanceof ArtistsController
-        			|| subViewController instanceof ArtistsMainController
-        			|| subViewController instanceof AlbumsController
-        			|| subViewController instanceof SongsController) {
-        			loadLetters = false;
-        			unloadLetters = false;
-        		} else {
-        			loadLetters = true;
-        			unloadLetters = false;
-        		}
-        		break;
-        	default:
-        		if (subViewController instanceof ArtistsController
-        			|| subViewController instanceof ArtistsMainController
-        			|| subViewController instanceof AlbumsController
-        			|| subViewController instanceof SongsController) {
-        			loadLetters = false;
-        			unloadLetters = true;
-        		} else {
-        			loadLetters = false;
-        			unloadLetters = false;
-        		}
-        		break;
-        	}
+        	// 	if (subViewController instanceof ArtistsController
+        	// 		|| subViewController instanceof ArtistsMainController
+        	// 		|| subViewController instanceof AlbumsController
+        	// 		|| subViewController instanceof SongsController) {
+        	// 		loadLetters = false;
+        	// 		unloadLetters = false;
+        	// 	} else {
+        	// 		loadLetters = true;
+        	// 		unloadLetters = false;
+        	// 	}
+        	// 	break;
+        	// default:
+        	// 	if (subViewController instanceof ArtistsController
+        	// 		|| subViewController instanceof ArtistsMainController
+        	// 		|| subViewController instanceof AlbumsController
+        	// 		|| subViewController instanceof SongsController) {
+        	// 		loadLetters = false;
+        	// 		unloadLetters = true;
+        	// 	} else {
+        	// 		loadLetters = false;
+        	// 		unloadLetters = false;
+        	// 	}
+        	// 	break;
+        	// }
 	        
 	        final boolean loadLettersFinal = loadLetters;
 	        final boolean unloadLettersFinal = unloadLetters;

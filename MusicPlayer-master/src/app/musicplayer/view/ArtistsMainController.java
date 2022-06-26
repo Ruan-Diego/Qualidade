@@ -173,7 +173,8 @@ public class ArtistsMainController implements Initializable, SubView {
     private double collapsedHeight = 0;
     private CountDownLatch loadedLatch;
     
-    @Override
+    //long Method= 255 Linhas
+    Override
     public void initialize(URL location, ResourceBundle resources) {
     	
     	songTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -313,25 +314,25 @@ public class ArtistsMainController implements Initializable, SubView {
             	task.setOnSucceeded(x -> Platform.runLater(() -> {
                     songTable.setVisible(true);
                     albumLoadAnimation.play();
-                }));
+                })));
             	
-            	Thread thread = new Thread(task);
+        //     	Thread thread = new Thread(task);
 
-            	albumUnloadAnimation.setOnFinished(x -> thread.start());
+        //     	albumUnloadAnimation.setOnFinished(x -> thread.start());
             	
-            	albumUnloadAnimation.play();
-            }
-        });
+        //     	albumUnloadAnimation.play();
+        //     }
+        // });
 
-        songTable.setRowFactory(x -> {
+        // songTable.setRowFactory(x -> {
 
-            TableRow<Song> row = new TableRow<>();
+        //     TableRow<Song> row = new TableRow<>();
 
-            PseudoClass playing = PseudoClass.getPseudoClass("playing");
+        //     PseudoClass playing = PseudoClass.getPseudoClass("playing");
 
-            ChangeListener<Boolean> changeListener = (obs, oldValue, newValue) -> {
-                row.pseudoClassStateChanged(playing, newValue);
-            };
+        //     ChangeListener<Boolean> changeListener = (obs, oldValue, newValue) -> {
+        //         row.pseudoClassStateChanged(playing, newValue);
+        //     };
 
             row.itemProperty().addListener((obs, previousSong, currentSong) -> {
             	if (previousSong != null) {
@@ -430,7 +431,7 @@ public class ArtistsMainController implements Initializable, SubView {
         		play();
         	}
         });
-        
+        ///////////////////////////////////////////
         artistList.setMinHeight(0);
         artistList.setPrefHeight(0);
         double height = artists.size() * 50;
