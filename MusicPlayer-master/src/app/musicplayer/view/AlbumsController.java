@@ -134,7 +134,7 @@ public class AlbumsController implements Initializable, SubView {
         	event.consume();
         });
         
-        // Sets the playing properties for the songs in the song table.
+        
         songTable.setRowFactory(x -> {
             TableRow<Song> row = new TableRow<Song>();
 
@@ -145,9 +145,7 @@ public class AlbumsController implements Initializable, SubView {
             };
 
             row.itemProperty().addListener((obs, previousSong, currentSong) -> {
-            	if (previousSong != null) {
-            		previousSong.playingProperty().removeListener(changeListener);
-            	}
+            	
             	if (currentSong != null) {
                     currentSong.playingProperty().addListener(changeListener);
                     row.pseudoClassStateChanged(playing, currentSong.getPlaying());

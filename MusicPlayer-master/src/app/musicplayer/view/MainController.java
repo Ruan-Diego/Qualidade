@@ -96,8 +96,7 @@ public class MainController implements Initializable, IntellitypeListener {
     	sliderSkin = new CustomSliderSkin(timeSlider);
     	timeSlider.setSkin(sliderSkin);
     	
-    	createVolumePopup();
-        createSearchPopup();
+    
     	
     	PseudoClass active = PseudoClass.getPseudoClass("active");
     	loopButton.setOnMouseClicked(x -> {
