@@ -29,7 +29,7 @@ public class Search {
             searchThread.interrupt();
         }
 
-        String text = searchText.toUpperCase();
+       
 
         searchThread = new Thread(() -> {
             try {

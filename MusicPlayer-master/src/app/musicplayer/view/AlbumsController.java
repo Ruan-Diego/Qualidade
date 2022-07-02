@@ -115,15 +115,6 @@ public class AlbumsController implements Initializable, SubView {
 
         new Thread(() -> {
         	
-            for (int j = 25; j < albums.size(); j++) {
-            	Album album = albums.get(j);
-                int k = j;
-                Platform.runLater(() -> {
-                    grid.getChildren().add(createCell(album, k));
-                });
-            }
-        }).start();
-        
         // Sets preferred column width.
         titleColumn.prefWidthProperty().bind(songTable.widthProperty().subtract(50).multiply(0.5));
         lengthColumn.prefWidthProperty().bind(songTable.widthProperty().subtract(50).multiply(0.25));

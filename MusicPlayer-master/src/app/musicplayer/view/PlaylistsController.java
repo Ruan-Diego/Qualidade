@@ -75,7 +75,7 @@ public class PlaylistsController implements Initializable, SubView {
     final float ENUM6 = 0.11f;
     final int ENUM7 = 50;
     
-    // Used to store the individual playlist boxes from the playlistBox. 
+    //magic number 
     private HBox cell;
     
     private Animation deletePlaylistAnimation = new Transition() {
@@ -83,15 +83,6 @@ public class PlaylistsController implements Initializable, SubView {
             setCycleDuration(Duration.millis(500));
             setInterpolator(Interpolator.EASE_BOTH);
         }
-        protected void interpolate(double frac) {        	    		
-            if (frac < ENUM) {
-                cell.setOpacity(ENUM2 - frac * ENUM3);
-            } else {
-                cell.setPrefHeight(cell.getHeight() - (frac - ENUM) * ENUM4);
-                cell.setOpacity(0);
-            }
-        }
-    };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
