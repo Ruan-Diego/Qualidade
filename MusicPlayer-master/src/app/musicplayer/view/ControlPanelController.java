@@ -72,8 +72,6 @@ public class ControlPanelController implements Initializable {
 			}
 		}
 
-		contextMenu = new ContextMenu();
-
 		MenuItem playing = new MenuItem("Playing");
 		playing.setStyle("-fx-text-fill: black");
 		playing.setOnAction(e1 -> {

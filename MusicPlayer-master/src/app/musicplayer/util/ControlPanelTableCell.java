@@ -47,8 +47,6 @@ public class ControlPanelTableCell<S, T> extends TableCell<S, T> {
 			// Selects the correct control panel based on whether the user is in a play list or not.
 			if (MusicPlayer.getMainController().getSubViewController() instanceof PlaylistsController) {
 				fileName = Resources.FXML + "ControlPanelPlaylists.fxml";
-			} else {
-				fileName = Resources.FXML + "ControlPanel.fxml";
 			}
 			try {
 				Label text = new Label(item.toString());

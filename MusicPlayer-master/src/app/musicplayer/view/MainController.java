@@ -287,21 +287,6 @@ public class MainController implements Initializable, IntellitypeListener {
 			ex.printStackTrace();
 		}
 	}
-    
-    public void updateNowPlayingButton() {
-
-        Song song = MusicPlayer.getNowPlaying();
-        if (song != null) {
-            nowPlayingTitle.setText(song.getTitle());
-            nowPlayingArtist.setText(song.getArtist());
-            nowPlayingArtwork.setImage(song.getArtwork());
-        } else {
-            nowPlayingTitle.setText("");
-            nowPlayingArtist.setText("");
-            nowPlayingArtwork.setImage(null);
-        }
-    }
-
     public void initializeTimeSlider() {
 
         Song song = MusicPlayer.getNowPlaying();

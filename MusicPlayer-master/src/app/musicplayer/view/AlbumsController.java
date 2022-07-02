@@ -114,12 +114,6 @@ public class AlbumsController implements Initializable, SubView {
         });
 
         new Thread(() -> {
-
-        	try {
-        		Thread.sleep(1000);
-        	} catch (Exception ex) {
-        		ex.printStackTrace();
-        	}
         	
             for (int j = 25; j < albums.size(); j++) {
             	Album album = albums.get(j);
@@ -407,10 +401,7 @@ public class AlbumsController implements Initializable, SubView {
     @Override
     public void scroll(char letter) {
     	
-	    int index = 0;
-    	double cellHeight = 0;
-    	ObservableList<Node> children = grid.getChildren();
-    	
+	    
     	for (int i = 0; i < children.size(); i++) {
     		
     		VBox cell = (VBox) children.get(i);
