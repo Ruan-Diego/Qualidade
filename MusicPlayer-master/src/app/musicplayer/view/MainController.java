@@ -129,12 +129,7 @@ public class MainController implements Initializable, IntellitypeListener {
 
                 double previous = oldValue.doubleValue();
                 double current = newValue.doubleValue();
-                if (!timeSlider.isValueChanging() && current != previous + 1 && !isTimeSliderPressed()) {
-
-                    int seconds = (int) Math.round(current / 4.0);
-                    timeSlider.setValue(seconds * 4);
-                    MusicPlayer.seek(seconds);
-                }
+                
             }
         );
         

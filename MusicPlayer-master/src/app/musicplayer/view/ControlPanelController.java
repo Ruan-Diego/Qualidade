@@ -64,13 +64,6 @@ public class ControlPanelController implements Initializable {
 
 		// Retrieves all the playlist titles to create menu items.
 		ObservableList<String> playlistTitles = FXCollections.observableArrayList();
-		for (Playlist playlist : playlists) {
-			String title = playlist.getTitle();
-			if (!(title.equals("Most Played") || title.equals("Recently Played")) &&
-					!playlist.getSongs().contains(selectedSong)) {
-				playlistTitles.add(title);
-			}
-		}
 
 		MenuItem playing = new MenuItem("Playing");
 		playing.setStyle("-fx-text-fill: black");
