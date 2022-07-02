@@ -298,16 +298,6 @@ public class ArtistsMainController implements Initializable, SubView {
                 MusicPlayer.setNowPlayingList(songs);
                 MusicPlayer.setNowPlaying(songs.get(0));
                 MusicPlayer.play();
-
-            } else {
-            	
-            	Task<Void> task = new Task<Void>() {
-            		@Override protected Void call() throws Exception {
-    	        		Platform.runLater(() -> {
-    	        			songTable.setVisible(false);
-    	        			selectAlbum(album);
-    	        		});
-    		        	return null;
     	        	}                		
             	};
             	
@@ -315,24 +305,6 @@ public class ArtistsMainController implements Initializable, SubView {
                     songTable.setVisible(true);
                     albumLoadAnimation.play();
                 })));
-            	
-        //     	Thread thread = new Thread(task);
-
-        //     	albumUnloadAnimation.setOnFinished(x -> thread.start());
-            	
-        //     	albumUnloadAnimation.play();
-        //     }
-        // });
-
-        // songTable.setRowFactory(x -> {
-
-        //     TableRow<Song> row = new TableRow<>();
-
-        //     PseudoClass playing = PseudoClass.getPseudoClass("playing");
-
-        //     ChangeListener<Boolean> changeListener = (obs, oldValue, newValue) -> {
-        //         row.pseudoClassStateChanged(playing, newValue);
-        //     };
 
             row.itemProperty().addListener((obs, previousSong, currentSong) -> {
             	if (previousSong != null) {

@@ -1143,18 +1143,6 @@ public class MainController implements Initializable, IntellitypeListener {
         }
     };
     
-    private Animation unloadViewAnimation = new Transition() {
-        {
-            setCycleDuration(Duration.millis(250));
-            setInterpolator(Interpolator.EASE_BOTH);
-        }
-        protected void interpolate(double frac) {
-            double curHeight = collapsedHeight + (expandedHeight - collapsedHeight) * (1 - frac);
-            subViewRoot.getContent().setTranslateY(expandedHeight - curHeight);
-            subViewRoot.getContent().setOpacity(1 - frac);
-        }
-    };
-    
     private Animation loadLettersAnimation = new Transition() {
     	{
             setCycleDuration(Duration.millis(250));

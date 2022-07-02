@@ -91,9 +91,6 @@ public class NowPlayingController implements Initializable, SubView {
         
         // Plays selected song when enter key is pressed.
         tableView.setOnKeyPressed(event -> {
-        	if (event.getCode().equals(KeyCode.ENTER)) {
-        		play();
-        	}
         });
     }
     
